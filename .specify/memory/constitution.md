@@ -1,50 +1,89 @@
-# [PROJECT_NAME] Constitution
-<!-- Example: Spec Constitution, TaskFlow Constitution, etc. -->
+<!--
+Sync Impact Report
+- Versión: 1.0.0 → 2.0.0 (MAYOR: el producto pasa de "PresupuestosPro" a "Reservas";
+  se redefinen el alcance y los principios II y V)
+- Principios:
+  - I. Simplicidad ante todo → sin cambios de fondo
+  - II. Español de España y euro → II. Idioma y mercado (sin referencias a PDF; el euro
+    solo aplica si aparece algún importe)
+  - III. Cero alcance fantasma → sin cambios de fondo
+  - IV. Verificable por una persona no técnica → ejemplo adaptado a reservas
+  - V. Datos del usuario con respeto → "imprescindibles para reservar" en vez de "para el presupuesto"
+- Secciones modificadas: Alcance del producto (reescrita para Reservas), Flujo de trabajo
+- Secciones eliminadas: ninguna
+- Plantillas dependientes: no se modifican (leen la constitución al ejecutarse)
+- Pendiente: la cuenta inicial admin/admin de la spec (FR-001) choca con el principio V;
+  decidir si se añade una excepción o se cambia la spec.
+-->
+
+# Constitución de Reservas
+
+Reservas es una página web para que los usuarios reserven los espacios de un cliente
+(pistas, cabinas, consultas, mesas, puestos, cursos...).
 
 ## Core Principles
 
-### [PRINCIPLE_1_NAME]
-<!-- Example: I. Library-First -->
-[PRINCIPLE_1_DESCRIPTION]
-<!-- Example: Every feature starts as a standalone library; Libraries must be self-contained, independently testable, documented; Clear purpose required - no organizational-only libraries -->
+### I. Simplicidad ante todo
 
-### [PRINCIPLE_2_NAME]
-<!-- Example: II. CLI Interface -->
-[PRINCIPLE_2_DESCRIPTION]
-<!-- Example: Every library exposes functionality via CLI; Text in/out protocol: stdin/args → stdout, errors → stderr; Support JSON + human-readable formats -->
+- Entre dos soluciones que cumplen la spec, se elige SIEMPRE la más simple.
+- Es una versión 1: NO se añade complejidad "por si acaso" (capas, configuraciones,
+  abstracciones o dependencias que hoy no hacen falta).
+- Cualquier complejidad extra DEBE justificarse por escrito en el plan.
 
-### [PRINCIPLE_3_NAME]
-<!-- Example: III. Test-First (NON-NEGOTIABLE) -->
-[PRINCIPLE_3_DESCRIPTION]
-<!-- Example: TDD mandatory: Tests written → User approved → Tests fail → Then implement; Red-Green-Refactor cycle strictly enforced -->
+**Por qué**: lo simple se termina antes, falla menos y se entiende mejor.
 
-### [PRINCIPLE_4_NAME]
-<!-- Example: IV. Integration Testing -->
-[PRINCIPLE_4_DESCRIPTION]
-<!-- Example: Focus areas requiring integration tests: New library contract tests, Contract changes, Inter-service communication, Shared schemas -->
+### II. Idioma y mercado
 
-### [PRINCIPLE_5_NAME]
-<!-- Example: V. Observability, VI. Versioning & Breaking Changes, VII. Simplicity -->
-[PRINCIPLE_5_DESCRIPTION]
-<!-- Example: Text I/O ensures debuggability; Structured logging required; Or: MAJOR.MINOR.BUILD format; Or: Start simple, YAGNI principles -->
+- Todo lo que ve el usuario (pantallas, mensajes, errores y emails) DEBE estar en español de España.
+- Fechas en formato `dd/mm/aaaa` y horas en formato de 24 h.
+- La única moneda es el euro (€). Si aparece algún importe, con formato español: `1.234,56 €`.
 
-## [SECTION_2_NAME]
-<!-- Example: Additional Constraints, Security Requirements, Performance Standards, etc. -->
+**Por qué**: el producto está pensado para clientes y usuarios en España.
 
-[SECTION_2_CONTENT]
-<!-- Example: Technology stack requirements, compliance standards, deployment policies, etc. -->
+### III. Cero alcance fantasma
 
-## [SECTION_3_NAME]
-<!-- Example: Development Workflow, Review Process, Quality Gates, etc. -->
+- NO se implementa ninguna funcionalidad que no esté escrita en la spec.
+- Si surge una idea nueva, se PROPONE (se anota para valorarla), pero no se construye.
+- Solo entra en el producto después de añadirse a la spec.
 
-[SECTION_3_CONTENT]
-<!-- Example: Code review requirements, testing gates, deployment approval process, etc. -->
+**Por qué**: así lo construido coincide con lo acordado.
+
+### IV. Verificable por una persona no técnica
+
+- Cada criterio de éxito DEBE poder comprobarse usando la app, sin leer código.
+- Cada criterio describe qué hacer y qué se debe ver (por ejemplo: "al confirmar una
+  reserva se muestra su número y llega un email con el resumen").
+- Un criterio que no se pueda comprobar así se reescribe antes de construir.
+
+**Por qué**: cualquier persona del proyecto puede confirmar si algo funciona.
+
+### V. Datos del usuario con respeto
+
+- Solo se piden los datos imprescindibles para reservar y gestionar las reservas.
+- Cada dato que se pida DEBE tener un uso claro en la spec.
+- NUNCA se escriben claves, contraseñas ni secretos en el código.
+
+**Por qué**: menos datos significa menos riesgo y más confianza.
+
+## Alcance del producto
+
+- Usuarios: las personas que reservan, el administrador del cliente y el personal de consulta.
+- Resultado principal: reservar un espacio en pocos pasos, desde el móvil o el ordenador.
+- Lo que no esté en la spec queda fuera de la versión 1 (principio III).
+
+## Flujo de trabajo
+
+- Orden: spec → plan → tareas → implementación.
+- Antes de construir, el plan comprueba que cumple los cinco principios.
+- Al terminar, se revisan los criterios de éxito usando la app (principio IV).
 
 ## Governance
-<!-- Example: Constitution supersedes all other practices; Amendments require documentation, approval, migration plan -->
 
-[GOVERNANCE_RULES]
-<!-- Example: All PRs/reviews must verify compliance; Complexity must be justified; Use [GUIDANCE_FILE] for runtime development guidance -->
+- Esta constitución está por encima de cualquier otra norma o costumbre del proyecto.
+- Para cambiarla hay que editar este documento, explicar el motivo y subir la versión:
+  - MAYOR: se quita o se redefine un principio.
+  - MENOR: se añade un principio o una sección.
+  - PARCHE: aclaraciones y correcciones de texto.
+- Cada plan y cada revisión comprueban que se cumplen los principios.
 
-**Version**: [CONSTITUTION_VERSION] | **Ratified**: [RATIFICATION_DATE] | **Last Amended**: [LAST_AMENDED_DATE]
-<!-- Example: Version: 2.1.1 | Ratified: 2025-06-13 | Last Amended: 2025-07-16 -->
+**Version**: 2.0.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-02
