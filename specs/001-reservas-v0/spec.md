@@ -19,6 +19,11 @@ curso de surf) de un cliente concreto, con roles de administrador, usuario y con
 - Q: ¿Qué pasa tras varios fallos de contraseña seguidos? → A: Tras 5 fallos seguidos se bloquea el acceso a esa cuenta 15 minutos.
 - Q: ¿Qué se hace con las reservas futuras que dejan de encajar tras cambiar horario, días o duración? → A: Se cancelan automáticamente y se avisa por email a cada usuario afectado.
 - Q: ¿Qué ve el usuario en su lista de reservas? → A: Todo su historial, pasado y futuro, vigente y cancelado.
+- Q: ¿Puede un usuario con sesión iniciada cambiar su contraseña desde "Mi perfil"? → A: No; solo se cambia con "¿Olvidó su contraseña?" (y la de `admin` en el primer acceso).
+- Q: ¿El administrador, al reservar para otro usuario, respeta el calendario del cliente? → A: Respeta días, horario y franjas (sin franjas ya pasadas), pero puede reservar más allá del plazo máximo de antelación.
+- Q: ¿Qué pasa cuando el administrador "elimina" una reserva? → A: Se cancela: queda como "Cancelada", se envía el email de cancelación y sigue visible en el historial y en consulta.
+- Q: ¿El administrador puede usar la pantalla de consulta? → A: Sí; ve la misma lista con filtros y búsqueda por número, y además tiene las opciones de crear, modificar y eliminar.
+- Q: ¿Qué ve el usuario si falla el envío del email de "¿Olvidó su contraseña?"? → A: "No se ha podido enviar el email, inténtelo de nuevo más tarde", y el enlace generado se anula.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -203,7 +208,8 @@ día, mes y usuario, y buscar una reserva por número.
 - **Franjas pasadas**: no se pueden reservar franjas de hoy cuya hora de inicio ya ha pasado.
 - **Última franja del día**: una franja solo existe si termina antes del cierre. Por ejemplo, con
   horario 10:00–20:00 y duración 2 h, la última franja empieza a las 18:00.
-- **Fuera de plazo**: no se puede elegir un día más allá del plazo máximo de antelación.
+- **Fuera de plazo**: no se puede elegir un día más allá del plazo máximo de antelación, salvo el
+  administrador cuando reserva para un usuario (FR-024).
 - **Días no permitidos**: los días que el cliente no abre no se pueden elegir.
 - **Cambios de configuración con reservas existentes**: si el administrador cambia horario, días o
   duración, antes de guardar se le indica cuántas reservas futuras dejarían de encajar y debe
@@ -213,7 +219,9 @@ día, mes y usuario, y buscar una reserva por número.
 - **Eliminar un espacio o planta con reservas futuras**: no se permite; se indica cuántas reservas
   futuras tiene.
 - **Fallo al enviar un email**: la reserva o el registro se guardan igualmente y se informa al
-  usuario de que el email no se pudo enviar.
+  usuario de que el email no se pudo enviar. Excepción: si falla el email de "¿Olvidó su
+  contraseña?", se muestra "No se ha podido enviar el email, inténtelo de nuevo más tarde" y el
+  enlace generado se anula.
 - **Cambio de año**: el contador es único para todas las reservas cuya fecha de reserva cae en el mismo
   año; la primera reserva con fecha de 2027 lleva `0001`, aunque se haga en 2026.
 - **Números cancelados**: el número de una reserva cancelada no se reutiliza.
@@ -253,7 +261,8 @@ día, mes y usuario, y buscar una reserva por número.
   para cambiarla, válido una sola vez durante 1 hora, y muestra "Se ha enviado un email a <email>,
   compruebe su bandeja de entrada"; si no existe, muestra "No existe ninguna cuenta con ese email".
 - **FR-012**: Cada usuario MUST poder ver y editar su perfil: nombre, apellidos, NIF, email y teléfono.
-- **FR-031**: Toda contraseña nueva (registro, cambio, recuperación, primer acceso del administrador
+  La contraseña no se cambia desde el perfil; para cambiarla se usa "¿Olvidó su contraseña?".
+- **FR-031**: Toda contraseña nueva (registro, recuperación, primer acceso del administrador
   y alta manual) MUST tener al menos 8 caracteres, con al menos una letra y un número; si no, se
   muestra "La contraseña debe tener al menos 8 caracteres, una letra y un número". Como `admin` no
   cumple la regla, no puede elegirse como contraseña nueva.
@@ -287,7 +296,11 @@ día, mes y usuario, y buscar una reserva por número.
 - **FR-023**: El sistema MUST enviar un email al usuario al crear, modificar y cancelar una reserva,
   con número, cliente, espacio, planta, día y hora.
 - **FR-024**: El administrador MUST poder crear reservas para cualquier usuario y modificarlas o
-  eliminarlas en cualquier momento, sin el límite del plazo mínimo de cancelación.
+  eliminarlas en cualquier momento, sin el límite del plazo mínimo de cancelación. Sus reservas
+  respetan los días, el horario y las franjas del cliente (no franjas ya pasadas), pero pueden
+  estar más allá del plazo máximo de antelación. "Eliminar" una reserva equivale a cancelarla:
+  queda como "Cancelada", el usuario recibe el email de cancelación y sigue visible en su historial
+  y en consulta.
 - **FR-033**: Si el administrador cambia días, horario o duración del cliente, el sistema MUST avisar
   de cuántas reservas futuras dejarían de encajar y pedir confirmación; al confirmar MUST cancelarlas
   y enviar un email de cancelación a cada usuario afectado.
@@ -297,8 +310,9 @@ día, mes y usuario, y buscar una reserva por número.
 
 **Consulta**
 
-- **FR-026**: Los usuarios de consulta MUST poder ver todas las reservas del cliente, filtrar por día,
-  por mes y por usuario, y buscar por número de reserva.
+- **FR-026**: Los usuarios de consulta y los administradores MUST poder ver todas las reservas del
+  cliente, filtrar por día, por mes y por usuario, y buscar por número de reserva. En esta lista, el
+  administrador tiene además las opciones de crear, modificar y eliminar (FR-024).
 - **FR-027**: Los usuarios de consulta MUST NOT poder crear, modificar ni eliminar nada.
 
 **General**
@@ -331,7 +345,7 @@ día, mes y usuario, y buscar una reserva por número.
   listo para reservar en menos de 15 minutos.
 - **SC-004**: En una prueba en la que dos personas confirman a la vez el mismo espacio y franja,
   solo una reserva queda guardada, en 10 de 10 intentos.
-- **SC-005**: Los emails de registro, reserva, modificación, cancelación y cambio de contraseña
+- **SC-005**: Los emails de registro, reserva, modificación, cancelación y recuperación de contraseña
   llegan en menos de 2 minutos.
 - **SC-006**: Una persona de consulta comprueba si un número de reserva es válido en menos de 30 segundos.
 - **SC-007**: Todas las pantallas se pueden usar en un móvil sin desplazarse en horizontal.
