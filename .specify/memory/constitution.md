@@ -1,6 +1,8 @@
 <!--
 Sync Impact Report
-- Versión: 1.0.0 → 2.0.0 (MAYOR: el producto pasa de "PresupuestosPro" a "Reservas";
+- Versión: 2.0.0 → 2.1.0 (MENOR: el principio V admite una única excepción para la
+  contraseña de primer uso de la cuenta inicial `admin`)
+- Versión anterior: 1.0.0 → 2.0.0 (MAYOR: el producto pasa de "PresupuestosPro" a "Reservas";
   se redefinen el alcance y los principios II y V)
 - Principios:
   - I. Simplicidad ante todo → sin cambios de fondo
@@ -12,8 +14,8 @@ Sync Impact Report
 - Secciones modificadas: Alcance del producto (reescrita para Reservas), Flujo de trabajo
 - Secciones eliminadas: ninguna
 - Plantillas dependientes: no se modifican (leen la constitución al ejecutarse)
-- Pendiente: la cuenta inicial admin/admin de la spec (FR-001) choca con el principio V;
-  decidir si se añade una excepción o se cambia la spec.
+- Resuelto (2.1.0): la cuenta inicial admin/admin de la spec (FR-001) queda permitida como
+  excepción explícita del principio V, porque su cambio es obligatorio (FR-002).
 -->
 
 # Constitución de Reservas
@@ -62,6 +64,8 @@ Reservas es una página web para que los usuarios reserven los espacios de un cl
 - Solo se piden los datos imprescindibles para reservar y gestionar las reservas.
 - Cada dato que se pida DEBE tener un uso claro en la spec.
 - NUNCA se escriben claves, contraseñas ni secretos en el código.
+  Única excepción: la contraseña de primer uso de la cuenta inicial (`admin`), siempre que
+  la aplicación obligue a cambiarla antes de permitir cualquier otra acción.
 
 **Por qué**: menos datos significa menos riesgo y más confianza.
 
@@ -86,4 +90,4 @@ Reservas es una página web para que los usuarios reserven los espacios de un cl
   - PARCHE: aclaraciones y correcciones de texto.
 - Cada plan y cada revisión comprueban que se cumplen los principios.
 
-**Version**: 2.0.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-02
+**Version**: 2.1.0 | **Ratified**: 2026-10-02 | **Last Amended**: 2026-10-02

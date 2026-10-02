@@ -257,7 +257,8 @@ día, mes y usuario, y buscar una reserva por número.
   y alta manual) MUST tener al menos 8 caracteres, con al menos una letra y un número; si no, se
   muestra "La contraseña debe tener al menos 8 caracteres, una letra y un número". Como `admin` no
   cumple la regla, no puede elegirse como contraseña nueva.
-- **FR-013**: Se accede con email y contraseña; la cuenta inicial usa el identificador `admin`.
+- **FR-013**: Se accede con email y contraseña. La cuenta inicial usa el identificador `admin`
+  hasta que el administrador guarda su email en el perfil; desde entonces entra con su email.
 - **FR-032**: Tras 5 intentos fallidos seguidos de acceso a una cuenta, el sistema MUST bloquear el
   acceso a esa cuenta durante 15 minutos y mostrar "Demasiados intentos, vuelva a probar en 15
   minutos". Un acceso correcto reinicia la cuenta de fallos.
@@ -338,9 +339,7 @@ día, mes y usuario, y buscar una reserva por número.
 
 ## Assumptions
 
-- **Constitución**: la constitución actual del proyecto describe "PresupuestosPro". Esta spec asume
-  los mismos principios (simplicidad, español de España, cero alcance fantasma, verificable sin
-  código, respeto por los datos) aplicados a Reservas. La constitución debe actualizarse antes del plan.
+- **Constitución**: se aplica la constitución de Reservas (v2.1.0).
 - **Cuenta inicial**: `admin` / `admin` es solo el acceso de primer uso y se cambia obligatoriamente
   (principio V de la constitución).
 - **Web adaptable**: la v0 es una página web que funciona en el móvil; no hay app nativa.

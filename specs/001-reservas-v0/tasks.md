@@ -45,10 +45,10 @@
 - [ ] T012 [US1] Crear `app/auth.py` con acceso por identificador (email o `admin`) y contraseña, cierre de sesión, y mensaje genérico "Email o contraseña incorrectos"; plantilla `app/templates/entrar.html`
 - [ ] T013 [US1] En `app/auth.py` añadir la validación de contraseña nueva (FR-031: "al menos 8 caracteres, con al menos una letra y un número"; mensaje exacto "La contraseña debe tener al menos 8 caracteres, una letra y un número") y la pantalla de cambio obligatorio de contraseña (`app/templates/cambiar_clave_obligatoria.html`) que limpia `debe_cambiar_clave`; `admin` no pasa la regla, por lo que no puede reutilizarse (US1-1, US1-2)
 - [ ] T014 [P] [US1] Crear `app/cliente.py` con la configuración del cliente: nombre (obligatorio), logo opcional (PNG/JPG, tamaño limitado, guardado en la base de datos), días L–D, apertura < cierre, duración múltiplo de 15 min y que quepa al menos una vez, plazo máximo de antelación (días), plazo mínimo de cancelación (horas); marca `configurado` al guardar (FR-004)
-- [ ] T015 [P] [US1] En `app/cliente.py` añadir CRUD de plantas (opcionales, nombre único) y espacios (nombre, planta opcional) (FR-005); borrar planta/espacio con reservas futuras vigentes se rechaza indicando cuántas tienen
+- [ ] T015 [US1] En `app/cliente.py` añadir CRUD de plantas (opcionales, nombre único) y espacios (nombre, planta opcional) (FR-005); borrar planta/espacio con reservas futuras vigentes se rechaza indicando cuántas tienen
 - [ ] T016 [US1] Crear `app/templates/asistente.html` (y plantillas de plantas/espacios): asistente de configuración paso a paso solo para administrador, usable en móvil (depende de T014, T015)
 - [ ] T017 [US1] En `app/__init__.py` servir el logo del cliente (ruta de imagen desde la base de datos) y mostrarlo en `base.html`
-- [ ] T018 [P] [US1] Crear `tests/test_cliente.py` (primera parte): validación de duración/horario; plantas y espacios; rechazo de borrar con reservas futuras (la parte de reservas se completa en US3)
+- [ ] T018 [P] [US1] Crear `tests/test_cliente.py` (primera parte): validación de duración/horario; plantas y espacios
 
 **Checkpoint**: pasos 1–4 del quickstart.
 
@@ -64,7 +64,7 @@
 - [ ] T020 [US2] En `app/correo.py` añadir el email de resumen de registro (sin contraseña) y llamarlo desde el registro; si falla, avisar al usuario sin deshacer el registro (FR-009)
 - [ ] T021 [US2] En `app/auth.py` añadir bloqueo: contar fallos seguidos en `usuario.fallos_acceso`; a los 5 guardar `bloqueado_hasta` = ahora + 15 min y mostrar "Demasiados intentos, vuelva a probar en 15 minutos"; un acceso correcto reinicia el contador (FR-032)
 - [ ] T022 [US2] En `app/auth.py` añadir "¿Olvidó su contraseña?": si el email existe, guardar solo la huella del enlace (un solo uso, caduca a 1 h) y enviar el email; mostrar "Se ha enviado un email a <email>, compruebe su bandeja de entrada"; si no existe, "No existe ninguna cuenta con ese email" y no enviar nada; pantalla de nueva contraseña con la regla de FR-031; enlace usado o caducado → aviso de caducidad y opción de pedir otro (FR-011); plantillas `olvido.html` y `nueva_clave.html`
-- [ ] T023 [P] [US2] Crear `app/usuarios.py` con "Mi perfil": ver/editar nombre, apellidos, NIF, email (único) y teléfono (FR-012); plantilla `app/templates/perfil.html`. El administrador inicial completa aquí sus datos
+- [ ] T023 [P] [US2] Crear `app/usuarios.py` con "Mi perfil": ver/editar nombre, apellidos, NIF, email (único) y teléfono (FR-012); plantilla `app/templates/perfil.html`. El administrador inicial completa aquí sus datos; al guardar su email, el identificador pasa a ser ese email (FR-013)
 - [ ] T024 [P] [US2] Crear `tests/test_auth.py`: reglas de contraseña, bloqueo a los 5 fallos y reinicio al acertar, enlace de recuperación de un solo uso y caducidad de 1 h
 
 **Checkpoint**: pasos 5–7 y 17 del quickstart.
@@ -91,7 +91,7 @@
 **Prueba independiente**: reservar, modificar, cancelar; comprobar emails y que el espacio vuelve a estar libre.
 
 - [ ] T029 [US4] En `app/reservas.py` crear "Mis reservas": todo el historial (pasado y futuro, vigente y cancelada, con estado); plantilla `mis_reservas.html` (FR-034)
-- [ ] T030 [US4] En `app/reservas.py` crear modificar (día, hora o espacio libre; conserva el número) y cancelar (pasa a `cancelada`, el hueco queda libre) solo para reservas futuras vigentes y si falta más que `cancelacion_min_horas`; si no, indicar el plazo (FR-022)
+- [ ] T030 [US4] En `app/reservas.py` crear modificar (día, hora o espacio libre; conserva el número) y cancelar (pasa a `cancelada`, el hueco queda libre) solo para reservas futuras vigentes y si falta más que `cancelacion_min_horas`; si no, indicar el plazo (FR-022). El nuevo día y franja se validan con `calcular_franjas` (días permitidos, plazo máximo, franja no pasada); si otro usuario ocupa el hueco a la vez, mostrar "Este espacio acaba de ser reservado, elija otro" y la reserva original no cambia
 - [ ] T031 [US4] En `app/correo.py` añadir los emails de modificación y cancelación y enviarlos desde T030 (FR-023)
 
 **Checkpoint**: pasos 11–12.
@@ -116,7 +116,7 @@
 - [ ] T034 [US6] En `app/reservas.py` crear (solo administrador) crear/modificar/eliminar reservas de cualquier usuario sin límite de plazo mínimo; "eliminar" = marcar `cancelada` para no perder números; plantillas `admin_reservas.html` y `admin_reserva_form.html` (FR-024)
 - [ ] T035 [US6] Enviar al usuario el email correspondiente en cada acción de T034 (reutilizando `app/correo.py`)
 - [ ] T036 [US6] En `app/cliente.py` implementar FR-033: al cambiar días, horario o duración, calcular cuántas reservas futuras vigentes dejarían de encajar, mostrar el aviso con la cifra, pedir confirmación y, al confirmar, cancelarlas y enviar a cada usuario afectado un email de cancelación que explique el motivo; las que siguen encajando no se tocan
-- [ ] T037 [P] [US6] Completar `tests/test_cliente.py`: el cambio de configuración cancela solo las reservas que dejan de encajar y deja libres sus espacios
+- [ ] T037 [P] [US6] Completar `tests/test_cliente.py`: el cambio de configuración cancela solo las reservas que dejan de encajar y deja libres sus espacios; y no se puede borrar una planta o espacio con reservas futuras vigentes (indica cuántas)
 
 **Checkpoint**: pasos 14–15.
 
@@ -138,7 +138,7 @@
 - [ ] T040 Revisar que todos los textos, errores y emails estén en español de España y que las fechas sean `dd/mm/aaaa` y 24 h (FR-028)
 - [ ] T041 Revisar en un móvil todas las pantallas: sin desplazamiento horizontal, botones usables (SC-007, FR-029)
 - [ ] T042 [P] Escribir `README.md` corto: variables de entorno (`SECRET_KEY`, `RESERVAS_DB`, datos SMTP), arranque local y en producción, y copia de seguridad (copiar el fichero de base de datos)
-- [ ] T043 Comprobar que no hay claves ni contraseñas en el código (excepto el `admin`/`admin` inicial obligatorio) (constitución, principio V)
+- [ ] T043 Comprobar que no hay claves ni contraseñas en el código (excepto la contraseña inicial `admin`, permitida por el principio V) (constitución, principio V)
 - [ ] T044 Recorrer completo [quickstart.md](quickstart.md) (los 19 pasos) y ejecutar `pytest`
 - [ ] T045 Publicar como un único servicio web con disco persistente y variables de entorno; comprobar el paso 19 (reinicio sin perder datos) en la dirección real
 
@@ -155,7 +155,7 @@
 ## Paralelo
 
 - Foundational: T007, T008, T009, T010, T011 a la vez tras T006.
-- US1: T014 y T015 a la vez. US2: T023 y T024 a la vez con el resto del registro.
+- US1: T018 en paralelo con T016–T017. US2: T023 y T024 a la vez con el resto del registro.
 - Tras US3: US4, US5 y US7 pueden avanzar a la vez.
 
 ## Estrategia

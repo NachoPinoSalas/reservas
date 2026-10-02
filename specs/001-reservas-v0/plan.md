@@ -35,9 +35,7 @@ online con un disco persistente. Todo se diseña para que se vea bien en el móv
 
 *GATE: pasa antes de Phase 0 y se vuelve a comprobar tras el diseño.*
 
-Nota: el fichero de constitución todavía se titula "PresupuestosPro" (la spec ya lo advierte en sus
-supuestos). Se aplican sus cinco principios, que son generales; solo lo específico de PDF/euros no
-aplica a Reservas.
+Se aplica la constitución de Reservas v2.1.0.
 
 | Principio | Estado | Cómo se cumple |
 |-----------|--------|----------------|
@@ -45,7 +43,7 @@ aplica a Reservas.
 | II. Español de España | ✅ | Todos los textos en español; fechas `dd/mm/aaaa`; hora de Madrid. El euro no interviene (no hay pagos). |
 | III. Cero alcance fantasma | ✅ | Solo se construye lo de la spec. El RF6 del borrador ("apificar") se decide como **no construir** en v1 (research.md, D-02). |
 | IV. Verificable sin código | ✅ | [quickstart.md](quickstart.md) recorre cada historia como lo haría una persona con la app. |
-| V. Datos con respeto | ✅ | Solo los datos de la spec; contraseñas guardadas cifradas (nunca en claro); `admin/admin` solo de primer uso y obligatoriamente cambiada; claves de email y de sesión en variables de entorno. |
+| V. Datos con respeto | ✅ | Solo los datos de la spec; contraseñas guardadas cifradas (nunca en claro); `admin/admin` permitido como única excepción del principio V (primer uso con cambio obligatorio, FR-002); claves de email y de sesión en variables de entorno. |
 
 **Resultado**: sin violaciones; no se necesita tabla de complejidad. Se vuelve a comprobar tras el diseño: sigue sin violaciones.
 
