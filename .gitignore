@@ -1,0 +1,24 @@
+# Base de datos
+*.db
+*.db-journal
+instance/
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# Secretos
+.env
+.env.*
+
+# Sistema / editores
+.DS_Store
+Thumbs.db
+*.tmp
+*.swp
+.vscode/
+.idea/
+*.log

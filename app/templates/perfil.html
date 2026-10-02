@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titulo %}Mi perfil{% endblock %}
+{% block contenido %}
+<h1>Mi perfil</h1>
+<form method="post" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if errores %}<ul class="errores" role="alert">{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  {% if usuario_actual.identificador == 'admin' %}
+    <p class="aviso aviso-info">Indique su email: a partir de ahora entrará con él en lugar de «admin».</p>
+  {% endif %}
+  <div class="dos-columnas">
+    <div>
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" autocomplete="given-name" required>
+    </div>
+    <div>
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" name="apellidos" value="{{ datos.apellidos }}" autocomplete="family-name" required>
+    </div>
+  </div>
+  <label for="email">Email <span class="ayuda">Es el que usa para entrar.</span></label>
+  <input type="email" id="email" name="email" value="{{ datos.email }}" autocomplete="email" autocapitalize="none" required>
+  <label for="telefono">Teléfono</label>
+  <input type="tel" id="telefono" name="telefono" value="{{ datos.telefono }}" autocomplete="tel" required>
+  <label for="nif">NIF <span class="ayuda">Opcional.</span></label>
+  <input type="text" id="nif" name="nif" value="{{ datos.nif }}">
+  <button type="submit" class="ancho">Guardar</button>
+  <p class="suave">La contraseña no se cambia aquí: use «¿Olvidó su contraseña?» en la pantalla de entrada.</p>
+</form>
+{% endblock %}

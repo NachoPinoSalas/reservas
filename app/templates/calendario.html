@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block titulo %}{{ titulo }}{% endblock %}
+{% block contenido %}
+<h1>{{ titulo }}</h1>
+{% if para_usuario %}<p class="aviso aviso-info">Para: <strong>{{ para_usuario }}</strong></p>{% endif %}
+{% if reserva %}
+  <p class="suave">Reserva actual: {{ reserva.dia | fecha }}, {{ reserva.hora_inicio }} · {{ reserva.espacio }}{% if reserva.planta %} ({{ reserva.planta }}){% endif %}. Elija el nuevo día, franja y espacio.</p>
+{% endif %}
+
+<h2>1. Elija un día</h2>
+{% if dias %}
+  <div class="dias">
+    {% for d in dias %}
+      <a class="dia{% if d == dia %} elegido{% endif %}" href="{{ url_dia(d.isoformat()) }}">
+        {{ d | dia_semana }}<small>{{ d | fecha }}</small>
+      </a>
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="suave">No hay días disponibles para reservar.</p>
+{% endif %}
+{% if es_admin %}
+  <form method="get" action="{{ request.path }}" class="tarjeta">
+    <label for="dia">Otra fecha <span class="ayuda">Como administrador puede reservar más allá del plazo máximo de antelación.</span></label>
+    <div class="fila-edicion">
+      <input type="date" id="dia" name="dia" value="{{ dia.isoformat() if dia else '' }}" required>
+      <button type="submit" class="boton-secundario">Ver día</button>
+    </div>
+  </form>
+{% endif %}
+
+{% if dia %}
+  <h2>2. Elija franja y espacio · {{ dia | dia_semana }} {{ dia | fecha }}</h2>
+  {% if franjas %}
+    <div class="leyenda"><span class="l-libre">Libre</span><span class="l-ocupado">Ocupado</span></div>
+    {% for franja in franjas %}
+      <section class="franja tarjeta">
+        <h3>{{ franja.hora }} – {{ franja.fin }}</h3>
+        {% if franja.celdas %}
+          <div class="espacios">
+            {% for celda in franja.celdas %}
+              {% if celda.actual %}
+                <a class="espacio actual" href="{{ celda.url }}">{{ celda.espacio.nombre }}<small>{% if celda.espacio.planta %}{{ celda.espacio.planta }} · {% endif %}su reserva</small></a>
+              {% elif celda.ocupado %}
+                <span class="espacio ocupado" aria-disabled="true">{{ celda.espacio.nombre }}<small>{% if celda.espacio.planta %}{{ celda.espacio.planta }} · {% endif %}ocupado</small></span>
+              {% else %}
+                <a class="espacio libre" href="{{ celda.url }}">{{ celda.espacio.nombre }}<small>{% if celda.espacio.planta %}{{ celda.espacio.planta }} · {% endif %}libre</small></a>
+              {% endif %}
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="suave">No hay espacios configurados.</p>
+        {% endif %}
+      </section>
+    {% endfor %}
+  {% else %}
+    <p class="aviso aviso-info">No hay franjas disponibles ese día. Elija otro.</p>
+  {% endif %}
+{% endif %}
+{% endblock %}

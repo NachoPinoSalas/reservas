@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% macro tarjeta_reserva(item) %}
+  {% set r = item.r %}
+  <div class="titulo">{{ r.numero }}
+    {% if r.estado == 'vigente' %}<span class="etiqueta etiqueta-vigente">Vigente</span>{% else %}<span class="etiqueta etiqueta-cancelada">Cancelada</span>{% endif %}
+  </div>
+  <div>{{ r.dia | dia_semana }} {{ r.dia | fecha }}, {{ r.hora_inicio }} – {{ item.fin }}</div>
+  <div>{{ r.espacio }}{% if r.planta %} · {{ r.planta }}{% endif %}</div>
+  <div class="suave">{{ r.u_nombre }} {{ r.u_apellidos }} · {{ r.u_email }}</div>
+  {% if item.gestionable %}
+    <div class="acciones">
+      <a class="boton boton-secundario boton-pequeno" href="{{ url_for('reservas.modificar', reserva_id=r.id) }}">Modificar</a>
+      <a class="boton boton-peligro boton-pequeno" href="{{ url_for('reservas.cancelar', reserva_id=r.id) }}">Eliminar</a>
+    </div>
+  {% endif %}
+{% endmacro %}
+
+{% block titulo %}Todas las reservas{% endblock %}
+{% block contenido %}
+<h1>Todas las reservas</h1>
+{% if es_admin %}
+  <p><a class="boton" href="{{ url_for('reservas.admin_elegir_usuario') }}">Nueva reserva para un usuario</a></p>
+{% endif %}
+
+<form method="get" class="tarjeta">
+  <label for="numero">Buscar por número de reserva</label>
+  <div class="fila-edicion">
+    <input type="text" id="numero" name="numero" value="{{ numero }}" placeholder="15-10-2026-0001" autocapitalize="none" inputmode="numeric">
+    <button type="submit">Buscar</button>
+  </div>
+</form>
+{% if encontrada %}
+  <ul class="lista"><li>{{ tarjeta_reserva(encontrada) }}</li></ul>
+{% elif no_existe %}
+  <p class="aviso aviso-error" role="alert">{{ mensaje_no_existe }}</p>
+{% endif %}
+
+<h2>Filtrar</h2>
+<form method="get" class="tarjeta">
+  <div class="filtros">
+    <div>
+      <label for="dia">Día</label>
+      <input type="date" id="dia" name="dia" value="{{ filtros.dia }}">
+    </div>
+    <div>
+      <label for="mes">Mes</label>
+      <input type="month" id="mes" name="mes" value="{{ filtros.mes }}">
+    </div>
+    <div>
+      <label for="usuario">Usuario</label>
+      <select id="usuario" name="usuario">
+        <option value="">Todos</option>
+        {% for u in usuarios %}
+          <option value="{{ u.id }}" {% if filtros.usuario == u.id %}selected{% endif %}>{% if u.apellidos or u.nombre %}{{ u.apellidos }}, {{ u.nombre }} · {% endif %}{{ u.identificador }}</option>
+        {% endfor %}
+      </select>
+    </div>
+  </div>
+  <div class="acciones">
+    <button type="submit">Filtrar</button>
+    <a href="{{ url_for('consulta.lista') }}">Quitar filtros</a>
+  </div>
+</form>
+
+<p class="suave">{{ reservas | length }} reservas{% if filtros.dia %} el {{ filtros.dia | fecha }}{% endif %}{% if filtros.mes %} en {{ filtros.mes | mes }}{% endif %}.</p>
+<ul class="lista">
+  {% for item in reservas %}
+    <li>{{ tarjeta_reserva(item) }}</li>
+  {% else %}
+    <li class="suave">No hay reservas con estos filtros.</li>
+  {% endfor %}
+</ul>
+{% endblock %}

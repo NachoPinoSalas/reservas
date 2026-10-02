@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block titulo %}Reserva {{ reserva.numero }}{% endblock %}
+{% block contenido %}
+<div class="tarjeta">
+  <h1>{% if reserva.estado == 'vigente' %}Reserva confirmada{% else %}Reserva cancelada{% endif %}</h1>
+  <p>Número de reserva:</p>
+  <p class="numero">{{ reserva.numero }}</p>
+  <dl class="datos">
+    {% if reserva.usuario_id != usuario_actual.id %}<dt>Usuario</dt><dd>{{ reserva.u_nombre }} {{ reserva.u_apellidos }} ({{ reserva.u_email }})</dd>{% endif %}
+    <dt>Cliente</dt><dd>{{ cliente.nombre }}</dd>
+    <dt>Espacio</dt><dd>{{ reserva.espacio }}</dd>
+    <dt>Planta</dt><dd>{{ reserva.planta or 'Sin planta' }}</dd>
+    <dt>Día</dt><dd>{{ reserva.dia | dia_semana }} {{ reserva.dia | fecha }}</dd>
+    <dt>Hora</dt><dd>{{ reserva.hora_inicio }} – {{ fin }}</dd>
+  </dl>
+  <div class="acciones">
+    <a class="boton" href="{{ url_vuelta }}">{% if reserva.usuario_id == usuario_actual.id %}Ver mis reservas{% else %}Volver a todas las reservas{% endif %}</a>
+    <a class="boton boton-secundario" href="{{ url_for('reservas.calendario') }}">Hacer otra reserva</a>
+  </div>
+</div>
+{% endblock %}

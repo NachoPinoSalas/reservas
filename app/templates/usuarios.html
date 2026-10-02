@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Usuarios{% endblock %}
+{% block contenido %}
+<h1>Usuarios</h1>
+<p><a class="boton" href="{{ url_for('usuarios.nuevo') }}">Nuevo usuario</a></p>
+<ul class="lista">
+  {% for u in usuarios %}
+    <li>
+      <div class="titulo">{% if u.nombre or u.apellidos %}{{ u.nombre }} {{ u.apellidos }}{% else %}{{ u.identificador }}{% endif %}
+        <span class="etiqueta etiqueta-rol">{{ roles[u.rol] }}</span>
+      </div>
+      <div class="suave">{{ u.identificador }}{% if u.telefono %} · {{ u.telefono }}{% endif %}</div>
+      <div class="acciones"><a class="boton boton-secundario boton-pequeno" href="{{ url_for('usuarios.editar', usuario_id=u.id) }}">Editar</a></div>
+    </li>
+  {% endfor %}
+</ul>
+{% endblock %}

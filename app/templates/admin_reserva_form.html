@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titulo %}Nueva reserva para un usuario{% endblock %}
+{% block contenido %}
+<h1>Nueva reserva para un usuario</h1>
+<form method="get" class="tarjeta">
+  <label for="usuario">Usuario</label>
+  <select id="usuario" name="usuario" required>
+    <option value="">Elija un usuario…</option>
+    {% for u in usuarios %}
+      <option value="{{ u.id }}">{% if u.apellidos or u.nombre %}{{ u.apellidos }}, {{ u.nombre }} · {% endif %}{{ u.identificador }}</option>
+    {% endfor %}
+  </select>
+  <button type="submit" class="ancho">Continuar</button>
+</form>
+<p><a href="{{ url_for('consulta.lista') }}">Volver a todas las reservas</a></p>
+{% endblock %}

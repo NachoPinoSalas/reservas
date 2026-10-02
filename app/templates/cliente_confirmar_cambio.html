@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titulo %}Confirmar cambio de horario{% endblock %}
+{% block contenido %}
+<h1>¿Confirmar el cambio?</h1>
+<div class="tarjeta">
+  <p class="aviso aviso-ok">Se han guardado el nombre, el logo y los plazos.</p>
+  <p class="aviso aviso-error" role="alert">
+    Con los nuevos días, horario o duración, <strong>{{ cuantas }} reservas futuras</strong> dejarían de encajar.
+    Si confirma, se cancelarán y cada usuario afectado recibirá un email explicando el motivo.
+  </p>
+  <form method="post" action="{{ url_for('cliente.confirmar_horario') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="nombre" value="{{ datos.nombre }}">
+    {% for d in datos.dias.split(',') %}<input type="hidden" name="dias" value="{{ d }}">{% endfor %}
+    <input type="hidden" name="apertura" value="{{ datos.apertura }}">
+    <input type="hidden" name="cierre" value="{{ datos.cierre }}">
+    <input type="hidden" name="duracion_min" value="{{ datos.duracion_min }}">
+    <input type="hidden" name="antelacion_max_dias" value="{{ datos.antelacion_max_dias }}">
+    <input type="hidden" name="cancelacion_min_horas" value="{{ datos.cancelacion_min_horas }}">
+    <button type="submit" class="boton-peligro ancho">Sí, cambiar y cancelar {{ cuantas }} reservas</button>
+  </form>
+  <p class="acciones"><a href="{{ url_for('cliente.datos') }}">No, mantener el horario actual</a></p>
+</div>
+{% endblock %}

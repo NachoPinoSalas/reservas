@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block titulo %}{{ boton }}{% endblock %}
+{% block contenido %}
+<h1>{% if reserva %}Confirmar el cambio{% else %}3. Confirmar la reserva{% endif %}</h1>
+<div class="tarjeta">
+  {% if para_usuario %}<p>Para: <strong>{{ para_usuario }}</strong></p>{% endif %}
+  {% if reserva %}
+    <p class="suave">Antes: {{ reserva.dia | fecha }}, {{ reserva.hora_inicio }} – {{ fin_actual }} · {{ reserva.espacio }}{% if reserva.planta %} ({{ reserva.planta }}){% endif %}</p>
+    <p><strong>Después:</strong></p>
+  {% endif %}
+  <dl class="datos">
+    <dt>Día</dt><dd>{{ eleccion.dia | dia_semana }} {{ eleccion.dia | fecha }}</dd>
+    <dt>Hora</dt><dd>{{ eleccion.hora }} – {{ eleccion.fin }}</dd>
+    <dt>Espacio</dt><dd>{{ eleccion.espacio.nombre }}</dd>
+    <dt>Planta</dt><dd>{{ eleccion.espacio.planta or 'Sin planta' }}</dd>
+  </dl>
+  <form method="post" action="{{ accion }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <input type="hidden" name="dia" value="{{ eleccion.dia }}">
+    <input type="hidden" name="hora" value="{{ eleccion.hora }}">
+    <input type="hidden" name="espacio" value="{{ eleccion.espacio.id }}">
+    <button type="submit" class="ancho">{{ boton }}</button>
+  </form>
+  <p class="acciones"><a href="{{ url_volver }}">Volver y elegir otro</a></p>
+</div>
+{% endblock %}

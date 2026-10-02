@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block titulo %}Reservas aún no disponibles{% endblock %}
+{% block contenido %}
+<div class="tarjeta">
+  <h1>Reservas aún no disponibles</h1>
+  <p>Todavía no se pueden hacer reservas. Vuelva a intentarlo más adelante.</p>
+  {% if not usuario_actual %}
+    <p class="suave">¿Es el administrador? <a href="{{ url_for('auth.entrar') }}">Entrar</a></p>
+  {% endif %}
+</div>
+{% endblock %}

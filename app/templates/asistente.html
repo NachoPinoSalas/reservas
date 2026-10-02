@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+{% block titulo %}Cliente{% endblock %}
+{% block contenido %}
+{% if not cliente.configurado %}
+  <p class="suave">Paso 1 de 2 · Datos y horario</p>
+  <h1>Configure el cliente</h1>
+{% else %}
+  <h1>Datos del cliente</h1>
+  <p><a href="{{ url_for('cliente.espacios') }}">Plantas y espacios</a></p>
+{% endif %}
+<form method="post" enctype="multipart/form-data" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if errores %}<ul class="errores" role="alert">{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+
+  <label for="nombre">Nombre del cliente</label>
+  <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" required>
+
+  <label for="logo">Logo <span class="ayuda">Opcional. PNG o JPG, hasta 500 KB. Se ve arriba a la izquierda.</span></label>
+  <input type="file" id="logo" name="logo" accept="image/png,image/jpeg">
+  {% if cliente.logo %}
+    <label class="casilla"><input type="checkbox" name="quitar_logo" value="1"> Quitar el logo actual</label>
+  {% endif %}
+
+  <h2>Días y horario</h2>
+  <span class="ayuda">Días en que se puede reservar</span>
+  <div class="casillas">
+    {% set elegidos = (datos.dias or '').split(',') %}
+    {% for letra in DIAS_LETRA %}
+      <label class="casilla"><input type="checkbox" name="dias" value="{{ loop.index0 }}" {% if loop.index0|string in elegidos %}checked{% endif %}> {{ letra }}</label>
+    {% endfor %}
+  </div>
+  <div class="dos-columnas">
+    <div>
+      <label for="apertura">Hora de apertura</label>
+      <input type="time" id="apertura" name="apertura" value="{{ datos.apertura }}" required>
+    </div>
+    <div>
+      <label for="cierre">Hora de cierre</label>
+      <input type="time" id="cierre" name="cierre" value="{{ datos.cierre }}" required>
+    </div>
+  </div>
+  <label for="duracion_min">Duración de cada reserva (minutos) <span class="ayuda">Múltiplo de 15: por ejemplo 15, 60 (1 h) o 120 (2 h).</span></label>
+  <input type="number" id="duracion_min" name="duracion_min" value="{{ datos.duracion_min if datos.duracion_min is not none else '' }}" min="15" step="15" inputmode="numeric" required>
+
+  <h2>Plazos</h2>
+  <div class="dos-columnas">
+    <div>
+      <label for="antelacion_max_dias">Plazo máximo de antelación (días) <span class="ayuda">Hasta cuántos días antes se puede reservar.</span></label>
+      <input type="number" id="antelacion_max_dias" name="antelacion_max_dias" value="{{ datos.antelacion_max_dias if datos.antelacion_max_dias is not none else '' }}" min="0" inputmode="numeric" required>
+    </div>
+    <div>
+      <label for="cancelacion_min_horas">Plazo mínimo de cancelación (horas) <span class="ayuda">Hasta cuántas horas antes se puede modificar o cancelar.</span></label>
+      <input type="number" id="cancelacion_min_horas" name="cancelacion_min_horas" value="{{ datos.cancelacion_min_horas if datos.cancelacion_min_horas is not none else '' }}" min="0" inputmode="numeric" required>
+    </div>
+  </div>
+  <button type="submit" class="ancho">{% if cliente.configurado %}Guardar{% else %}Guardar y seguir{% endif %}</button>
+</form>
+{% endblock %}

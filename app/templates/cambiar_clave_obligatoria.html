@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block titulo %}Elija una contraseña nueva{% endblock %}
+{% block contenido %}
+<h1>Elija una contraseña nueva</h1>
+<p>Es su primer acceso. Antes de continuar debe cambiar la contraseña inicial.</p>
+<form method="post" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if error %}<p class="aviso aviso-error" role="alert">{{ error }}</p>{% endif %}
+  <label for="clave">Contraseña nueva <span class="ayuda">Al menos 8 caracteres, con una letra y un número.</span></label>
+  <input type="password" id="clave" name="clave" autocomplete="new-password" required autofocus>
+  <label for="repetir">Repita la contraseña</label>
+  <input type="password" id="repetir" name="repetir" autocomplete="new-password" required>
+  <button type="submit" class="ancho">Guardar contraseña</button>
+</form>
+{% endblock %}

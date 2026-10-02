@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block titulo %}{% if eliminar %}Eliminar{% else %}Cancelar{% endif %} reserva{% endblock %}
+{% block contenido %}
+<h1>{% if eliminar %}¿Eliminar esta reserva?{% else %}¿Cancelar esta reserva?{% endif %}</h1>
+<div class="tarjeta">
+  <dl class="datos">
+    <dt>Número</dt><dd>{{ reserva.numero }}</dd>
+    {% if eliminar %}<dt>Usuario</dt><dd>{{ reserva.u_nombre }} {{ reserva.u_apellidos }} ({{ reserva.u_email }})</dd>{% endif %}
+    <dt>Día</dt><dd>{{ reserva.dia | dia_semana }} {{ reserva.dia | fecha }}</dd>
+    <dt>Hora</dt><dd>{{ reserva.hora_inicio }} – {{ fin }}</dd>
+    <dt>Espacio</dt><dd>{{ reserva.espacio }}{% if reserva.planta %} · {{ reserva.planta }}{% endif %}</dd>
+  </dl>
+  <p class="suave">La reserva quedará como «Cancelada», el espacio quedará libre y se enviará un email de cancelación.</p>
+  <form method="post">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <button type="submit" class="boton-peligro ancho">{% if eliminar %}Eliminar reserva{% else %}Cancelar reserva{% endif %}</button>
+  </form>
+  <p class="acciones"><a href="{{ url_vuelta }}">No, volver</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block titulo %}Entrar{% endblock %}
+{% block contenido %}
+<h1>Entrar</h1>
+<form method="post" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if error %}<p class="aviso aviso-error" role="alert">{{ error }}</p>{% endif %}
+  <label for="identificador">Email</label>
+  <input type="text" id="identificador" name="identificador" value="{{ identificador }}" autocomplete="username" autocapitalize="none" required autofocus>
+  <label for="clave">Contraseña</label>
+  <input type="password" id="clave" name="clave" autocomplete="current-password" required>
+  <button type="submit" class="ancho">Entrar</button>
+  <p class="acciones"><a href="{{ url_for('auth.olvido') }}">¿Olvidó su contraseña?</a></p>
+</form>
+{% if cliente and cliente.configurado %}
+  <p>¿No tiene cuenta? <a href="{{ url_for('auth.registro') }}">Regístrese</a></p>
+{% endif %}
+{% endblock %}

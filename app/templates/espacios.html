@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block titulo %}Plantas y espacios{% endblock %}
+{% block contenido %}
+{% if not cliente.configurado %}<p class="suave">Paso 2 de 2 · Plantas y espacios</p>{% endif %}
+<h1>Plantas y espacios</h1>
+<p><a href="{{ url_for('cliente.datos') }}">{% if cliente.configurado %}Datos del cliente{% else %}Volver al paso 1{% endif %}</a></p>
+
+<h2>Plantas <span class="ayuda">Opcionales: sirven para agrupar espacios (por ejemplo «Planta 1» o «Terraza»).</span></h2>
+<ul class="lista">
+  {% for p in plantas %}
+    <li>
+      <form method="post" action="{{ url_for('cliente.renombrar_planta', planta_id=p.id) }}" class="fila-edicion">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="text" name="nombre" value="{{ p.nombre }}" aria-label="Nombre de la planta" required>
+        <button type="submit" class="boton-secundario boton-pequeno">Guardar</button>
+      </form>
+      <form method="post" action="{{ url_for('cliente.eliminar_planta', planta_id=p.id) }}" class="acciones">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button type="submit" class="boton-peligro boton-pequeno">Eliminar planta</button>
+      </form>
+    </li>
+  {% endfor %}
+</ul>
+<form method="post" action="{{ url_for('cliente.crear_planta') }}" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label for="nueva_planta">Nueva planta</label>
+  <div class="fila-edicion">
+    <input type="text" id="nueva_planta" name="nombre" required>
+    <button type="submit">Añadir planta</button>
+  </div>
+</form>
+
+<h2>Espacios <span class="ayuda">Lo que se reserva: «Pista 1», «Mesa 4», «Cabina 2»…</span></h2>
+<ul class="lista">
+  {% for e in espacios %}
+    <li>
+      <form method="post" action="{{ url_for('cliente.editar_espacio', espacio_id=e.id) }}" class="fila-edicion">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <input type="text" name="nombre" value="{{ e.nombre }}" aria-label="Nombre del espacio" required>
+        <select name="planta_id" aria-label="Planta">
+          <option value="">Sin planta</option>
+          {% for p in plantas %}<option value="{{ p.id }}" {% if p.id == e.planta_id %}selected{% endif %}>{{ p.nombre }}</option>{% endfor %}
+        </select>
+        <button type="submit" class="boton-secundario boton-pequeno">Guardar</button>
+      </form>
+      <form method="post" action="{{ url_for('cliente.eliminar_espacio', espacio_id=e.id) }}" class="acciones">
+        <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+        <button type="submit" class="boton-peligro boton-pequeno">Eliminar espacio</button>
+      </form>
+    </li>
+  {% else %}
+    <li class="suave">Todavía no hay espacios.</li>
+  {% endfor %}
+</ul>
+<form method="post" action="{{ url_for('cliente.crear_espacio') }}" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  <label for="nuevo_espacio">Nuevo espacio</label>
+  <input type="text" id="nuevo_espacio" name="nombre" required>
+  <label for="nuevo_espacio_planta">Planta</label>
+  <select id="nuevo_espacio_planta" name="planta_id">
+    <option value="">Sin planta</option>
+    {% for p in plantas %}<option value="{{ p.id }}">{{ p.nombre }}</option>{% endfor %}
+  </select>
+  <button type="submit" class="ancho">Añadir espacio</button>
+</form>
+
+{% if not cliente.configurado %}
+  <form method="post" action="{{ url_for('cliente.terminar') }}">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    <button type="submit" class="ancho">Terminar configuración</button>
+  </form>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}¿Olvidó su contraseña?{% endblock %}
+{% block contenido %}
+<h1>¿Olvidó su contraseña?</h1>
+{% if enviado %}
+  <div class="tarjeta">
+    <p class="aviso aviso-ok" role="status">Se ha enviado un email a {{ enviado }}, compruebe su bandeja de entrada</p>
+    <p>El enlace sirve una sola vez y caduca en 1 hora.</p>
+    <p><a href="{{ url_for('auth.entrar') }}">Volver a entrar</a></p>
+  </div>
+{% else %}
+  <form method="post" class="tarjeta">
+    <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+    {% if error %}<p class="aviso aviso-error" role="alert">{{ error }}</p>{% endif %}
+    <p>Indique el email de su cuenta y le enviaremos un enlace para elegir una contraseña nueva.</p>
+    <label for="email">Email</label>
+    <input type="email" id="email" name="email" value="{{ email }}" autocomplete="email" autocapitalize="none" required autofocus>
+    <button type="submit" class="ancho">Enviar enlace</button>
+  </form>
+  <p><a href="{{ url_for('auth.entrar') }}">Volver a entrar</a></p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block titulo %}{% if nuevo %}Nuevo usuario{% else %}Editar usuario{% endif %}{% endblock %}
+{% block contenido %}
+<h1>{% if nuevo %}Nuevo usuario{% else %}Editar usuario{% endif %}</h1>
+<form method="post" class="tarjeta">
+  <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+  {% if errores %}<ul class="errores" role="alert">{% for e in errores %}<li>{{ e }}</li>{% endfor %}</ul>{% endif %}
+  <div class="dos-columnas">
+    <div>
+      <label for="nombre">Nombre</label>
+      <input type="text" id="nombre" name="nombre" value="{{ datos.nombre }}" required>
+    </div>
+    <div>
+      <label for="apellidos">Apellidos</label>
+      <input type="text" id="apellidos" name="apellidos" value="{{ datos.apellidos }}" required>
+    </div>
+  </div>
+  <label for="email">Email</label>
+  <input type="email" id="email" name="email" value="{{ datos.email }}" autocapitalize="none" required>
+  <label for="telefono">Teléfono</label>
+  <input type="tel" id="telefono" name="telefono" value="{{ datos.telefono }}" required>
+  <label for="nif">NIF <span class="ayuda">Opcional.</span></label>
+  <input type="text" id="nif" name="nif" value="{{ datos.nif }}">
+  <label for="rol">Rol</label>
+  <select id="rol" name="rol" required>
+    {% for valor, texto in roles.items() %}
+      <option value="{{ valor }}" {% if datos.rol == valor %}selected{% endif %}>{{ texto }}</option>
+    {% endfor %}
+  </select>
+  {% if nuevo %}
+    <label for="clave">Contraseña <span class="ayuda">Al menos 8 caracteres, con una letra y un número.</span></label>
+    <input type="password" id="clave" name="clave" autocomplete="new-password" required>
+  {% endif %}
+  <button type="submit" class="ancho">Guardar</button>
+</form>
+<p><a href="{{ url_for('usuarios.lista') }}">Volver a usuarios</a></p>
+{% endblock %}

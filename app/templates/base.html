@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Reservas{% endblock %}{% if cliente and cliente.nombre %} · {{ cliente.nombre }}{% endif %}</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="cabecera">
+    <a class="marca" href="{{ url_for('index') }}">
+      {% if cliente and cliente.logo %}
+        <img class="logo" src="{{ url_for('logo') }}" alt="Logo de {{ cliente.nombre }}">
+      {% endif %}
+      <span>{{ cliente.nombre if cliente and cliente.nombre else 'Reservas' }}</span>
+    </a>
+    <nav class="menu">
+      {% if usuario_actual and not usuario_actual.debe_cambiar_clave %}
+        {% if usuario_actual.rol in ('usuario', 'administrador') and cliente.configurado %}
+          <a href="{{ url_for('reservas.calendario') }}">Reservar</a>
+          <a href="{{ url_for('reservas.mis_reservas') }}">Mis reservas</a>
+        {% endif %}
+        {% if usuario_actual.rol in ('consulta', 'administrador') and cliente.configurado %}
+          <a href="{{ url_for('consulta.lista') }}">Todas las reservas</a>
+        {% endif %}
+        {% if usuario_actual.rol == 'administrador' %}
+          <a href="{{ url_for('usuarios.lista') }}">Usuarios</a>
+          <a href="{{ url_for('cliente.datos') }}">Cliente</a>
+        {% endif %}
+        <a href="{{ url_for('usuarios.perfil') }}">Mi perfil</a>
+      {% endif %}
+      {% if usuario_actual %}
+        <form method="post" action="{{ url_for('auth.salir') }}" class="en-linea">
+          <input type="hidden" name="_csrf" value="{{ csrf_token() }}">
+          <button type="submit" class="enlace">Salir</button>
+        </form>
+      {% elif cliente and cliente.configurado %}
+        <a href="{{ url_for('auth.entrar') }}">Entrar</a>
+        <a href="{{ url_for('auth.registro') }}">Registrarse</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <main class="contenido">
+    {% with mensajes = get_flashed_messages(with_categories=true) %}
+      {% for categoria, mensaje in mensajes %}
+        <p class="aviso aviso-{{ categoria }}" role="status">{{ mensaje }}</p>
+      {% endfor %}
+    {% endwith %}
+    {% block contenido %}{% endblock %}
+  </main>
+</body>
+</html>

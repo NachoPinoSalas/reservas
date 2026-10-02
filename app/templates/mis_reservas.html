@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titulo %}Mis reservas{% endblock %}
+{% block contenido %}
+<h1>Mis reservas</h1>
+<p><a class="boton" href="{{ url_for('reservas.calendario') }}">Nueva reserva</a></p>
+{% if reservas %}
+  <ul class="lista">
+    {% for item in reservas %}
+      {% set r = item.r %}
+      <li>
+        <div class="titulo">{{ r.numero }}
+          {% if r.estado == 'vigente' %}<span class="etiqueta etiqueta-vigente">Vigente</span>{% else %}<span class="etiqueta etiqueta-cancelada">Cancelada</span>{% endif %}
+          {% if item.pasada %}<span class="suave">· pasada</span>{% endif %}
+        </div>
+        <div>{{ r.dia | dia_semana }} {{ r.dia | fecha }}, {{ r.hora_inicio }} – {{ item.fin }}</div>
+        <div>{{ r.espacio }}{% if r.planta %} · {{ r.planta }}{% endif %}</div>
+        {% if r.estado == 'vigente' and not item.pasada %}
+          {% if item.motivo %}
+            <p class="suave">{{ item.motivo }}</p>
+          {% else %}
+            <div class="acciones">
+              <a class="boton boton-secundario boton-pequeno" href="{{ url_for('reservas.modificar', reserva_id=r.id) }}">Modificar</a>
+              <a class="boton boton-peligro boton-pequeno" href="{{ url_for('reservas.cancelar', reserva_id=r.id) }}">Cancelar</a>
+            </div>
+          {% endif %}
+        {% endif %}
+      </li>
+    {% endfor %}
+  </ul>
+{% else %}
+  <p class="suave">Todavía no tiene reservas.</p>
+{% endif %}
+{% endblock %}
